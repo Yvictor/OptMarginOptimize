@@ -366,6 +366,12 @@ df_a.loc[7, 'POC'] = 'P'
 df_a.loc[7, 'OTAMT'] = 25000.0
 
 
+# In[331]:
+
+
+df_a.loc[7, 'PRICE'] = 110.
+
+
 # In[255]:
 
 
@@ -385,31 +391,93 @@ df_a.loc[df_a['COMBTYPE']==2, 'SELECTED'] = 1
 df_a
 
 
-# In[264]:
+# In[332]:
 
 
 combs = df_a[df_a['SELECTED']==1]
 
 
-# In[265]:
+# In[333]:
 
 
 combs
 
 
-# In[266]:
+# In[334]:
 
 
 combs[combs['POC']=='P']
 
 
-# In[267]:
+# In[335]:
 
 
 combs[combs['POC']=='C']
 
 
-# In[269]:
+# In[336]:
+
+
+get_ipython().run_cell_magic(u'timeit', u'', u"combs.sort_values('OTAMT', ascending=False)[['OTAMT', 'PRICE']].values * np.eye(2)")
+
+
+# In[337]:
+
+
+get_ipython().run_cell_magic(u'timeit', u'', u"combs[['OTAMT', 'PRICE']].values")
+
+
+# In[344]:
+
+
+a = combs[['OTAMT', 'PRICE']].values
+(a[a[:, 0].argsort()[::-1]] * np.eye(2)).sum()
+
+
+# In[345]:
+
+
+def stra_comb(arr):
+    return (arr[arr[:, 0].argsort()[::-1]] * np.eye(2)).sum()
+
+
+# In[346]:
+
+
+get_ipython().run_cell_magic(u'timeit', u'', u"stra_comb(combs[['OTAMT', 'PRICE']].values)")
+
+
+# In[343]:
+
+
+get_ipython().run_cell_magic(u'timeit', u'', u'(a[a[:, 0].argsort()[::-1]] * np.eye(2)).sum()')
+
+
+# In[340]:
+
+
+a[a[:, 0].argsort()]
+
+
+# In[316]:
+
+
+get_ipython().run_cell_magic(u'timeit', u'', u"combs.sort_values('OTAMT', ascending=False)")
+
+
+# In[318]:
+
+
+get_ipython().run_cell_magic(u'timeit', u'', u"combs[['OTAMT', 'PRICE']]")
+
+
+# In[312]:
+
+
+get_ipython().run_cell_magic(u'timeit', u'', u"(combs.sort_values('POC')[['OTAMT', 'PRICE']].values * np.eye(2)).sum()")
+
+
+# In[305]:
 
 
 a = {'C': {'OTAMT': 25000,
@@ -418,32 +486,32 @@ a = {'C': {'OTAMT': 25000,
        'PRICE': 159.0}}
 
 
-# In[280]:
+# In[306]:
 
 
 np.array([a['C']['OTAMT'], a['P']['OTAMT']])
 
 
-# In[286]:
+# In[307]:
 
 
 conv_ind_pc = {0: 'C', 1: 'P'}
 conv_ind_pc
 
 
-# In[282]:
+# In[308]:
 
 
 np.argmin(np.array([a['C']['OTAMT'], a['P']['OTAMT']]))
 
 
-# In[289]:
+# In[311]:
 
 
-max(a['C']['OTAMT'], a['P']['OTAMT']) + a[conv_ind_pc[np.argmin(np.array([a['C']['OTAMT'], a['P']['OTAMT']]))]]['PRICE']*50
+get_ipython().run_cell_magic(u'timeit', u'', u"max(a['C']['OTAMT'], a['P']['OTAMT']) + a[conv_ind_pc[np.argmin(np.array([a['C']['OTAMT'], a['P']['OTAMT']]))]]['PRICE']*50")
 
 
-# In[287]:
+# In[310]:
 
 
 a[conv_ind_pc[np.argmin(np.array([a['C']['OTAMT'], a['P']['OTAMT']]))]]['PRICE']*50
